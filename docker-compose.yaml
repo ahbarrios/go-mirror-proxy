@@ -1,0 +1,15 @@
+version: '3'
+services:
+  envoy:
+    image: envoyproxy/envoy:v1.29.1
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./envoy/proxy.yaml:/etc/envoy/envoy.yaml
+  tcp:
+    build:
+      dockerfile: ../../Dockerfile
+      context: ./proxies/tcp
+    command: ["/proxy", "--addr", "0.0.0.0:8080"]
+    ports:
+    - "8080:8080"
