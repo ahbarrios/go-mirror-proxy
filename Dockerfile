@@ -19,4 +19,4 @@ COPY . ./
 # Build
 RUN CGO_ENABLED=0 GOOS=linux go build -o /proxy
 
-CMD [ "/proxy" ]
+ENTRYPOINT [ "/proxy" ]

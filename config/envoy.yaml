@@ -20,7 +20,10 @@ static_resources:
               domains: ["*"]
               routes:
               - match: { prefix: "/" }
-                route: { cluster: tcp_proxy }
+                route: 
+                  cluster: tcp_proxy
+                  request_mirror_policies:
+                    - cluster: http_proxy
           http_filters:
           - name: envoy.filters.http.router
             typed_config:
@@ -38,4 +41,30 @@ static_resources:
             address:
               socket_address:
                 address: tcp
+                port_value: 8080
+  - name: http_proxy
+    connect_timeout: 0.25s
+    type: LOGICAL_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: tcp_proxy
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: http
+                port_value: 8080
+  - name: reverse_proxy
+    connect_timeout: 0.25s
+    type: LOGICAL_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: tcp_proxy
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: reverse
                 port_value: 8080
