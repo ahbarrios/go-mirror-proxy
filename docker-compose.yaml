@@ -1,23 +1,5 @@
 version: '3'
 services:
-  traefik:
-    # The official v2 Traefik docker image
-    image: traefik:v2.11
-    # Enables the web UI and point to dynamic configuration file
-    command: --api.insecure=true --providers.file.filename=/etc/traefik/dynamic.yaml 
-    ports:
-      # The HTTP port
-      - "80:80"
-      # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
-    volumes:
-      - ./config/traefik.yaml:/etc/traefik/dynamic.yaml
-  envoy:
-    image: envoyproxy/envoy:v1.29.1
-    ports:
-      - "10000:10000"
-    volumes:
-      - ./config/envoy.yaml:/etc/envoy/envoy.yaml
   tcp:
     build:
       dockerfile: ../../Dockerfile
@@ -33,3 +15,11 @@ services:
       dockerfile: ../../Dockerfile
       context: ./proxies/reverse
     command: --addr=0.0.0.0:8080
+  gateway:
+    build:
+      dockerfile: ../Dockerfile
+      context: ./gateway
+    # If you don't specify the schema on the proxy and mirrors params it will fail but not panic due to parsing ambiguity in the `url.Parse` stdlib function 
+    command: --addr=0.0.0.0:8080 --proxy=http://tcp:8080 --mirrors=http://http:8080,http://reverse:8080
+    ports:
+      - "8080:8080"

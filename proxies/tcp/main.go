@@ -42,6 +42,7 @@ func handleConnection(conn net.Conn) {
 		conn.Write([]byte("HTTP/1.1 400 Bad Request\r\n\r\n"))
 		return
 	}
+	log.Printf("Received request for %s with headers %v\n", req.URL.String(), req.Header)
 
 	port := ":80"
 	if p := req.URL.Port(); p != "" {

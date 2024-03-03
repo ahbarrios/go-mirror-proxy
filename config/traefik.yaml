@@ -7,17 +7,9 @@ http:
 
   services:
     proxy:
-      mirroring:
-        service: tcp
-        # maxBodySize is the maximum size allowed for the body of the request.
-        # If the body is larger, the request is not mirrored.
-        # Default value is -1, which means unlimited size.
-        # maxBodySize: 1024
-        mirrors:
-        - name: http
-          percent: 100
-        - name: reverse
-          percent: 100
+      loadBalancer:
+        servers:
+        - url: "http://gateway:8080/"
 
     tcp:
       loadBalancer:

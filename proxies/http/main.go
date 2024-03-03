@@ -27,7 +27,7 @@ func main() {
 // This is too simple to support all the cases in the wild, such as protocol upgrades,
 // streaming, SSE, Websocket, h2c, etc.
 func simpleProxy(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Received request for %s\n", r.URL.String())
+	log.Printf("Received request for %s with headers %v\n", r.URL.String(), r.Header)
 	res, err := http.DefaultTransport.RoundTrip(r)
 	if err != nil {
 		log.Printf("Error: %s\n", err.Error())
