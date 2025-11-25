@@ -49,7 +49,7 @@ func handleConnection(conn net.Conn) {
 		port = ":" + p
 	}
 
-	rconn, err := net.DialTimeout("tcp", req.Host+port, 30*time.Second)
+	rconn, err := net.DialTimeout("tcp", req.URL.Hostname()+port, 30*time.Second)
 	if err != nil {
 		log.Printf("Error: %s\n", err.Error())
 		conn.Write([]byte("HTTP/1.1 502 Bad Gateway\r\n\r\n"))
